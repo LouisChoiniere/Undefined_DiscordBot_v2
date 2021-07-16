@@ -1,0 +1,31 @@
+{
+  "name": "undefined_discordbot_v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/app.js",
+  "scripts": {
+    "start": "tsc && node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/opus": "^0.5.3",
+    "@prisma/client": "^2.25.0",
+    "axios": "^0.21.1",
+    "consola": "^2.15.3",
+    "discord.js": "^12.5.3",
+    "dotenv": "^10.0.0",
+    "ffmpeg-static": "^4.3.0",
+    "glob": "^7.1.7",
+    "luxon": "^1.27.0",
+    "mathjs": "^9.4.2",
+    "ytdl-core": "^4.8.2"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/luxon": "^1.27.0",
+    "@types/node": "^15.12.2",
+    "prisma": "^2.25.0"
+  }
+}

@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+    provider = "mysql"
+    url      = env("DBCONN")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Guild {
+    id        String   @id
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name        String @db.VarChar(100)
+    memberCount Int?
+
+    ownerID String
+    owner   User   @relation(fields: [ownerID], references: [id])
+
+    CommandHistory CommandHistory[]
+}
+
+model User {
+    id        String   @id
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    username      String @db.VarChar(32)
+    discriminator String @db.VarChar(4)
+
+    CommandHistory CommandHistory[]
+    Guild          Guild[]
+    Permission     Permission[]
+}
+
+model CommandHistory {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+
+    userId  String
+    user    User   @relation(fields: [userId], references: [id])
+    guildId String
+    guid    Guild  @relation(fields: [guildId], references: [id])
+
+    command  String @db.VarChar(255)
+    execTime Int
+}
+
+model Permission {
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    superUser Boolean @default(false)
+
+    userId String @id
+    user   User   @relation(fields: [userId], references: [id])
+}
