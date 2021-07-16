@@ -3,7 +3,15 @@ FROM node:16
 WORKDIR /app
 COPY . /app
 
+# Install modules
 RUN npm install
 
+# Build project
+RUN npx tsc
+
+
+# Migrate db
 CMD npx prisma migrate deploy
+
+# Run project
 CMD npm start
