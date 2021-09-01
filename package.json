@@ -4,8 +4,10 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
+    "build": "tsc",
     "start": "node dist/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "release": "docker build -t kexigew/undefined_discordbot_v2 . && docker push kexigew/undefined_discordbot_v2"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +22,7 @@
     "glob": "^7.1.7",
     "luxon": "^1.27.0",
     "mathjs": "^9.4.2",
+    "typescript": "^4.3.5",
     "ytdl-core": "^4.8.2"
   },
   "devDependencies": {

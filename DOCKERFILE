@@ -1,17 +1,15 @@
 FROM node:16
 
 WORKDIR /app
-COPY . /app
 
-# Install modules
+# Install packages
+COPY package.json /app
 RUN npm install
 
-# Build project
-RUN npx tsc
+# Copy all other source code to work directory
+# Build TypeScript
+COPY . /app
+RUN npm run build
 
-
-# Migrate db
-CMD npx prisma migrate deploy
-
-# Run project
-CMD npm start
+# Run
+CMD ./run.sh
