@@ -10,6 +10,7 @@ import VoiceChatUtil from "../../../Utils/VoiceChatUtil";
 
 export const command: ICommand = {
     name: 'play',
+    aliases: ['p'],
     description: 'Play Music',
     run: async (client: UndefinedClient, guild: Guild, user: User, message: Message, userCommand: IUserCommand) => {
 

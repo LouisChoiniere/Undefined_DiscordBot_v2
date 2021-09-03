@@ -8,6 +8,7 @@ export interface runFuncion {
 
 export interface ICommand {
     name: string;
+    aliases?: [string];
     description: string;
     run: runFuncion;
 };

@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
+    "watch": "concurrently --kill-others \"tsc --watch\" \"nodemon\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "release": "docker build -t kexigew/undefined_discordbot_v2 . && docker push kexigew/undefined_discordbot_v2"
   },
@@ -16,7 +17,7 @@
     "@prisma/client": "^2.25.0",
     "axios": "^0.21.1",
     "consola": "^2.15.3",
-    "discord.js": "^12.5.3",
+    "discord.js": "~12.5.3",
     "dotenv": "^10.0.0",
     "ffmpeg-static": "^4.3.0",
     "glob": "^7.1.7",
@@ -29,6 +30,7 @@
     "@types/glob": "^7.1.3",
     "@types/luxon": "^1.27.0",
     "@types/node": "^15.12.2",
+    "concurrently": "^6.2.1",
     "prisma": "^2.25.0"
   }
 }

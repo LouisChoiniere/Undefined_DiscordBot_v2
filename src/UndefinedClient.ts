@@ -41,23 +41,21 @@ export class UndefinedClient extends Client {
         const commandFiles = await globPromise(`${__dirname}/Commands/**/*{.js,.ts}`)
         await Promise.all(commandFiles.map(async (cmdFile: string) => {
             let cmd = (await import(cmdFile)).command as ICommand;
-            if (cmd)
-                this.commands.set(cmd.name, cmd);
-            else
-                this.logger.warn(`Couldn't load command: ${cmdFile}`)
+            
+            this.commands.set(cmd.name, cmd);
+            cmd.aliases?.forEach(alias => {
+                this.commands.set(alias, cmd);
+            });
         }));
-        this.logger.info(`Loaded ${this.commands.size}/${commandFiles.length} command`);
+        this.logger.info(`Loaded ${this.commands.size} commands and aliases from ${commandFiles.length} commands`);
 
         // Load events
         const eventFiles = await globPromise(`${__dirname}/Events/**/*{.js,.ts}`)
         await Promise.all(eventFiles.map(async (eventFile: string) => {
             let event = (await import(eventFile)).event as IEvent;
-            if (event)
-                this.on(event.name, event.run.bind(null, this))
-            else
-                this.logger.warn(`Couldn't load event: ${eventFile}`);
+            this.on(event.name, event.run.bind(null, this))
         }));
-        this.logger.info(`Loaded events`);
+        this.logger.info(`Loaded ${eventFiles.length} events`);
 
         this.login(process.env.TOKEN);
     }
