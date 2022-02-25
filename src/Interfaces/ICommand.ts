@@ -1,5 +1,5 @@
-import { UndefinedClient } from "../UndefinedClient";
 import { Guild, Message, User } from "discord.js";
+import { UndefinedClient } from "../UndefinedClient";
 import { IUserCommand } from "./IUserCommand";
 
 export interface runFuncion {
@@ -8,7 +8,7 @@ export interface runFuncion {
 
 export interface ICommand {
     name: string;
-    aliases?: [string];
+    aliases?: Array<string>;
     description: string;
     run: runFuncion;
 };

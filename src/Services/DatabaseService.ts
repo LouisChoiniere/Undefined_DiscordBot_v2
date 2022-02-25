@@ -10,7 +10,7 @@ export default class DatabaseService {
     }
 
     async saveGuild(guild: Guild) {
-        let owner = await this.client.users.fetch(guild.ownerID)!;
+        let owner = await this.client.users.fetch(guild.ownerId)!;
         await this.saveUser(owner);
 
         await this.client.prisma.guild.upsert({
@@ -20,13 +20,13 @@ export default class DatabaseService {
             update: {
                 name: guild.name,
                 memberCount: guild.memberCount,
-                ownerID: guild.ownerID
+                ownerID: guild.ownerId
             },
             create: {
                 id: guild.id,
                 name: guild.name,
                 memberCount: guild.memberCount,
-                ownerID: guild.ownerID
+                ownerID: guild.ownerId
             }
         });
     }

@@ -1,20 +1,18 @@
-import { ICommand } from "../../Interfaces/ICommand"
-import { Guild, Message, MessageEmbed, MessageEmbedOptions, User } from "discord.js";
-import { UndefinedClient } from "../../UndefinedClient";
-import VoiceChatUtil from "../../Utils/VoiceChatUtil";
-import { VoiceObject } from "../../Interfaces/VoiceObjects";
+import { Guild, Message, User } from "discord.js";
+import { ICommand } from "../../Interfaces/ICommand";
 import { IUserCommand } from "../../Interfaces/IUserCommand";
+import { UndefinedClient } from "../../UndefinedClient";
 
 export const command: ICommand = {
     name: 'join',
     description: 'Join voice channel',
     run: async (client: UndefinedClient, guild: Guild, user: User, message: Message, userCommand: IUserCommand) => {
 
-        if (!VoiceChatUtil.isConnected(message)) {
+        if (!client.VoiceChatService.isMemberConnected(message)) {
             return;
         }
-        
-        await client.VoiceChatService.join(guild.id, message.member?.voice.channel!);
+
+        client.VoiceChatService.join(message.member?.voice.channel!, guild)
 
         await message.react('👌');
     }

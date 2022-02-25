@@ -1,8 +1,8 @@
-import { ICommand } from "../../Interfaces/ICommand"
-import { Guild, Message, MessageEmbed, MessageEmbedOptions, User } from "discord.js";
+import { Guild, Message, MessageEmbed, User } from "discord.js";
 import { evaluate } from "mathjs";
-import { UndefinedClient } from "../../UndefinedClient";
+import { ICommand } from "../../Interfaces/ICommand";
 import { IUserCommand } from "../../Interfaces/IUserCommand";
+import { UndefinedClient } from "../../UndefinedClient";
 
 export const command: ICommand = {
     name: 'math',
@@ -14,10 +14,12 @@ export const command: ICommand = {
         try {
             var answer = evaluate(expresstion);
 
-            await message.channel.send(new MessageEmbed()
-                .setTitle(':abacus: Math')
-                .addField('**Expresstion**', expresstion, false)
-                .addField('**Answer**', answer, false));
+            await message.channel.send({
+                embeds: [new MessageEmbed()
+                    .setTitle(':abacus: Math')
+                    .addField('**Expresstion**', expresstion, false)
+                    .addField('**Answer**', answer, false)]
+            });
         } catch {
             await message.channel.send('Could not evaluate this equation');
         }

@@ -1,20 +1,15 @@
-import { Guild, Message, MessageEmbed, MessageEmbedOptions, User } from "discord.js";
+import { Guild, Message, MessageEmbed, User } from "discord.js";
 import { ICommand } from "../../../Interfaces/ICommand";
 import { IUserCommand } from "../../../Interfaces/IUserCommand";
 import { UndefinedClient } from "../../../UndefinedClient";
-import VoiceChatUtil from "../../../Utils/VoiceChatUtil";
-
 
 export const command: ICommand = {
     name: 'queue',
+    aliases: ['q', 'np'],
     description: 'Check the queue',
     run: async (client: UndefinedClient, guild: Guild, user: User, message: Message, userCommand: IUserCommand) => {
 
-        if (!VoiceChatUtil.isConnected(message)) {
-            return;
-        }
-
-        var queue = client.queue.get(guild.id);
+        var queue = client.VoiceChatService.getQueue(guild);
         if (!queue || queue.length == 0) {
             await message.channel.send('Queue is empty!');
             return;
@@ -44,6 +39,6 @@ export const command: ICommand = {
             }]
         });
 
-        await message.channel.send(embed);
+        await message.channel.send({'embeds' : [embed]});
     }
 }

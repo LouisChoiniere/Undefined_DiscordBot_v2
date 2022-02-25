@@ -1,16 +1,14 @@
-import { Client, Collection } from "discord.js";
-import { IEvent } from "./Interfaces/IEvent";
+import { PrismaClient } from "@prisma/client";
+import consola, { Consola } from 'consola';
+import { Client, Collection, Intents, TextChannel } from "discord.js";
 import glob from 'glob';
 import { promisify } from "util";
-import consola, { Consola } from 'consola';
-import { PrismaClient } from "@prisma/client";
-import { VoiceObject } from "./Interfaces/VoiceObjects";
 import { ICommand } from "./Interfaces/ICommand";
+import { IEvent } from "./Interfaces/IEvent";
 import DatabaseService from "./Services/DatabaseService";
-import VoiceChatService from "./Services/VoiceChatService";
 import PermissionService from "./Services/PermissionService";
+import VoiceChatService from "./Services/VoiceChatService";
 import YoutubeService from "./Services/YoutubeService";
-import { IQueueElement } from "./Interfaces/IQueueElement";
 const globPromise = promisify(glob);
 require('dotenv').config({ path: __dirname + '/../.env' });
 
@@ -27,11 +25,15 @@ export class UndefinedClient extends Client {
     public readonly prefix: string = process.env.PREFIX!;
     public commands: Collection<string, ICommand> = new Collection();
 
-    public voiceObjects: Collection<string, VoiceObject> = new Collection();
-    public queue: Collection<string, Array<IQueueElement> | undefined> = new Collection();
-
     constructor() {
-        super();
+        super({
+            intents: [
+                Intents.FLAGS.GUILDS,
+                Intents.FLAGS.GUILD_MESSAGES,
+                Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+                Intents.FLAGS.GUILD_VOICE_STATES,
+            ]
+        });
     }
 
     public async start(): Promise<void> {
@@ -41,7 +43,9 @@ export class UndefinedClient extends Client {
         const commandFiles = await globPromise(`${__dirname}/Commands/**/*{.js,.ts}`)
         await Promise.all(commandFiles.map(async (cmdFile: string) => {
             let cmd = (await import(cmdFile)).command as ICommand;
-            
+
+            if (cmd == null) return;
+
             this.commands.set(cmd.name, cmd);
             cmd.aliases?.forEach(alias => {
                 this.commands.set(alias, cmd);
@@ -53,10 +57,24 @@ export class UndefinedClient extends Client {
         const eventFiles = await globPromise(`${__dirname}/Events/**/*{.js,.ts}`)
         await Promise.all(eventFiles.map(async (eventFile: string) => {
             let event = (await import(eventFile)).event as IEvent;
+
+            if (event == null) return;
+
             this.on(event.name, event.run.bind(null, this))
         }));
         this.logger.info(`Loaded ${eventFiles.length} events`);
 
+        // Login discord using token stored in env variable
         this.login(process.env.TOKEN);
+    }
+
+    public send(textChannelId: string, message: any) {
+        try {
+            let channel = this.channels.cache.find(channel => channel.id == textChannelId);
+
+            if (channel?.isText()) {
+                (<TextChannel>channel).send(message)
+            }
+        } finally { }
     }
 }

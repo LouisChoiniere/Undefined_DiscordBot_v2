@@ -1,11 +1,11 @@
 import { Guild, Message, TextChannel, User } from "discord.js";
-import { IUserCommand, IFlag } from "../Interfaces/IUserCommand";
 import { IEvent } from "../Interfaces/IEvent";
+import { IFlag, IUserCommand } from "../Interfaces/IUserCommand";
 import { UndefinedClient } from "../UndefinedClient";
 
 
 export const event: IEvent = {
-    name: 'message',
+    name: 'messageCreate',
     run: async (client: UndefinedClient, message: Message) => {
 
         // prevent bot to take action from message of other bots

@@ -1,7 +1,7 @@
-import { ICommand } from "../../Interfaces/ICommand"
-import { Guild, Message, MessageEmbed, MessageEmbedOptions, User } from "discord.js";
-import { UndefinedClient } from "../../UndefinedClient";
+import { Guild, Message, User } from "discord.js";
+import { ICommand } from "../../Interfaces/ICommand";
 import { IUserCommand } from "../../Interfaces/IUserCommand";
+import { UndefinedClient } from "../../UndefinedClient";
 
 export const command: ICommand = {
     name: 'user',
@@ -14,6 +14,6 @@ export const command: ICommand = {
 
         var userLookup = (await client.users.fetch(userCommand.args[0])).toJSON()
 
-        await message.channel.send(`\`\`\`json\n${JSON.stringify(userLookup, null, 4)}\`\`\``);
+        await message.channel.send(`\`\`\`json\n${JSON.stringify(userLookup, null, 2)}\`\`\``);
     }
 }

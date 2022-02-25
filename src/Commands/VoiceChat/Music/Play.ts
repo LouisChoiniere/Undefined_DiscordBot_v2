@@ -1,11 +1,9 @@
 import { Guild, Message, User } from "discord.js";
-import ytdl from 'ytdl-core';
 import { ICommand } from "../../../Interfaces/ICommand";
 import { IQueueElement } from "../../../Interfaces/IQueueElement";
 import { IUserCommand } from "../../../Interfaces/IUserCommand";
 import { UndefinedClient } from "../../../UndefinedClient";
-import { googleScrape } from "../../../Utils/GoogleScrape";
-import VoiceChatUtil from "../../../Utils/VoiceChatUtil";
+import { getPage, googleScrape } from "../../../Utils/GoogleScrape";
 
 
 export const command: ICommand = {
@@ -14,54 +12,49 @@ export const command: ICommand = {
     description: 'Play Music',
     run: async (client: UndefinedClient, guild: Guild, user: User, message: Message, userCommand: IUserCommand) => {
 
-        if (!VoiceChatUtil.isConnected(message)) {
+        if (!client.VoiceChatService.isMemberConnected(message)) {
             return;
         }
 
-        await client.VoiceChatService.join(guild.id, message.member?.voice.channel!);
+        // Join vc
+        client.VoiceChatService.join(message.member?.voice.channel!, guild);
 
-        var voice = client.voiceObjects.get(guild.id)!;
+        // Add to queue
+        var queue = client.VoiceChatService.getQueue(guild);
+        await addToQueue(queue, userCommand.args.join(' '), message.channelId);
 
-        var queue = client.queue.get(guild.id);
-        if (!queue) {
-            queue = new Array<IQueueElement>();
-            client.queue.set(guild.id, queue);
-        }
+        // Start audio playback
+        client.VoiceChatService.startPlayback(guild);
 
-        const arg = userCommand.args.join(' ')
 
-        if (!arg.match(/youtu.?be/)) {
-            var searchResponseDto = await googleScrape(arg, 'youtube.com');
-            queue.push({ name: searchResponseDto.results[0].name, url: searchResponseDto.results[0].url })
-        } else {
-            queue.push({ name: arg, url: arg })
-        }
-        
-        if (!voice.isPlaying) {
-            play(client, guild.id, message);
-        }
+        async function addToQueue(queue: IQueueElement[], arg: string, channelId: string) {
+            var queueElement;
 
-        function play(client: UndefinedClient, guildId: string, message: Message) {
+            if (!arg) {
+                client.VoiceChatService.resumePlayback(guild);
+            }
 
-            if (!voice || !queue)
-                return;
+            // Youtube url
+            else if (arg.match(/youtu.?be/)) {
+                let match = arg.match(/\S*youtu.?be\S*/g)![0]  
 
-            voice.dispatcher = voice!.connection?.play(ytdl(queue[0].url, { filter: "audioonly" }));
+                let title = (await getPage(match)).title;
+                let url = match;
 
-            voice.dispatcher!.on('start', () => {
-                voice!.isPlaying = true;
-                message.channel.send(`Started playing \`${queue![0].name}\``);
-            });
+                queueElement = { name: title, url: url, location: channelId };
+            }
 
-            voice.dispatcher!.on('finish', () => {
-                queue!.shift();
-                if (queue![0]) {
-                    play(client, guildId, message);
-                } else {
-                    voice!.isPlaying = false;
-                    message.channel.send('Done playing queue!');
-                }
-            });
+            // Search on google
+            else {
+                var searchResponseDto = await googleScrape(arg, 'youtube.com');
+                queueElement = { name: searchResponseDto.results[0].name, url: searchResponseDto.results[0].url, location: channelId };
+            }
+
+            // Add queue element to queue
+            if (queueElement) {
+                queue.push(queueElement);
+                message.channel.send(`**${queueElement.name}** has been added to the queue.`);
+            }
         }
     }
 }

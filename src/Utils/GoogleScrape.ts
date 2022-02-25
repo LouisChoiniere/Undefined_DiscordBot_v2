@@ -1,6 +1,13 @@
-const axios = require('axios');
+import axios from 'axios';
+import cheerio from 'cheerio';
 
-
+/**
+ * Scrape goodle search
+ * @param search Keywords looking for
+ * @param site Site to look on
+ * @param start page number to start on
+ * @returns Search result object
+ */
 export async function googleScrape(search: string, site: string = '', start: number = 0): Promise<SearchResponseDto> {
 
     const q = `${search} site:${site}`
@@ -22,6 +29,8 @@ export async function googleScrape(search: string, site: string = '', start: num
     let data = res.data;
 
     let results = new Array<SearchItem>();
+
+    //TODO Update using cheerio
 
     const regexYTRecomended = /<a href="\/url\?q=(https:\/\/?[\w/\-?=%.]+)&(?:(?:.|\n)+?)<div class="kCrYT"><span><div class="BNeawe deIvCb AP7Wnd">(.+?)<\/div><\/span>/g;
     results = results.concat(match(data, regexYTRecomended));
@@ -45,6 +54,30 @@ function match(data: string, regex: RegExp): Array<SearchItem> {
     return result;
 }
 
+/**
+ * Scrape data from page
+ * @param url url to scrape
+ * @returns Page result object
+ */
+export async function getPage(url: string): Promise<PageResponseDto> {
+    var res = await axios({
+        method: 'GET',
+        url: url,
+        headers: {
+            'accept': 'text/html'
+        }
+    });
+
+    var $ = cheerio.load(res.data);
+
+    let result: PageResponseDto = {
+        title: $('title').text(),
+        page: res.data,
+    };
+    return result;
+}
+
+
 export interface SearchResponseDto {
     date: Date;
     results: Array<SearchItem>
@@ -53,4 +86,9 @@ export interface SearchResponseDto {
 export interface SearchItem {
     url: string;
     name: string;
+}
+
+export interface PageResponseDto {
+    title: string;
+    page: string;
 }

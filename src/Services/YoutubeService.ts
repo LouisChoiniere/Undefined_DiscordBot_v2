@@ -1,4 +1,3 @@
-import { User } from "discord.js";
 import { UndefinedClient } from "../UndefinedClient";
 
 export default class YoutubeService {
