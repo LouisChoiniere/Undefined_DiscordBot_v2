@@ -1,6 +1,5 @@
 import { Guild, Message, TextChannel, User } from "discord.js";
 import { IEvent } from "../Interfaces/IEvent";
-import { IFlag, IUserCommand } from "../Interfaces/IUserCommand";
 import { UndefinedClient } from "../UndefinedClient";
 
 
@@ -8,35 +7,24 @@ export const event: IEvent = {
     name: 'messageCreate',
     run: async (client: UndefinedClient, message: Message) => {
 
-        // prevent bot to take action from message of other bots
+        if (!message.guild) return;
         if (message.author.bot) return;
-
-        // only answer TextChannels
         if (!(message.channel instanceof TextChannel)) return;
-
-        // check if message starts with bot prefix
-        if (message.content.startsWith(process.env.PREFIX!)) {
+        if (!message.content.startsWith(process.env.PREFIX!)) return;
 
 
-            var userCommand : IUserCommand = getUserCommand(message);
+        let command = message.content.split(" ")[0].slice(process.env.PREFIX?.length);
+        let params = message.content.split(" ").slice(1);
 
-            var guild = message.guild;
-            if (!guild) {
-                return;
-            }
 
-            var user = message.member?.user
-            if (!user) {
-                return;
-            }
+        var hrstart = process.hrtime()
+        await client.commands.get(command)?.run(client, message, params);
+        var hrend = process.hrtime(hrstart)
 
-            var hrstart = process.hrtime()
-            await client.commands.get(userCommand.command)?.run(client, guild, user, message, userCommand)
-            var hrend = process.hrtime(hrstart)
 
-            let execTime = Math.floor((hrend[0] * 1e9 + hrend[1]) / 1e6);
-            saveToDb(guild, user, message.content, execTime);
-        }
+        let execTime = Math.floor((hrend[0] * 1e9 + hrend[1]) / 1e6);
+        saveToDb(message.guild, message.member?.user!, message.content, execTime);
+
 
         async function saveToDb(guild: Guild, user: User, command: string, execTime: number) {
             await client.DatabaseService.saveUser(user);
@@ -56,17 +44,3 @@ export const event: IEvent = {
         }
     }
 };
-
-function getUserCommand(message: Message): IUserCommand {
-    const command = message.content.slice(process.env.PREFIX!.length).trim().split(' ')[0];
-
-    const args = message.content.slice(process.env.PREFIX!.length).trim().split(' ').slice(1);
-
-    let flagsMatch = message.content.matchAll(/-(\w+) ([^\s]+)/g);
-    let flags = Array<IFlag>();
-    for (const match of flagsMatch) {
-        flags.push({ flag: match[1], value: match[2] })
-    }
-
-    return { command: command, args: args, flags: flags };
-}

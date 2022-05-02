@@ -1,13 +1,13 @@
 {
   "name": "undefined_discordbot_v2",
-  "version": "1.1.1",
+  "version": "1.0.0",
   "description": "",
   "main": "dist/app.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "release": "docker build -t kexigew/undefined_discordbot_v2 . && docker push kexigew/undefined_discordbot_v2"
+    "release": "docker build -t kexigew/undefined_discordbot_v2:latest . && docker push kexigew/undefined_discordbot_v2:latest"
   },
   "author": "",
   "license": "ISC",

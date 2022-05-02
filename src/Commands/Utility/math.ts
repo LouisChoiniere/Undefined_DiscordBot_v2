@@ -1,15 +1,14 @@
 import { Guild, Message, MessageEmbed, User } from "discord.js";
 import { evaluate } from "mathjs";
 import { ICommand } from "../../Interfaces/ICommand";
-import { IUserCommand } from "../../Interfaces/IUserCommand";
 import { UndefinedClient } from "../../UndefinedClient";
 
 export const command: ICommand = {
     name: 'math',
     description: 'Calculates math equations for you!',
-    run: async (client: UndefinedClient, guild: Guild, user: User, message: Message, userCommand: IUserCommand) => {
+    run: async (client: UndefinedClient, message: Message, params: string[]) => {
 
-        const expresstion = userCommand.args.join(' ')
+        const expresstion = params.join(' ')
 
         try {
             var answer = evaluate(expresstion);

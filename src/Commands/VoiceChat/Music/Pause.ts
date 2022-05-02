@@ -1,18 +1,17 @@
 import { Guild, Message, User } from "discord.js";
 import { ICommand } from "../../../Interfaces/ICommand";
-import { IUserCommand } from "../../../Interfaces/IUserCommand";
 import { UndefinedClient } from "../../../UndefinedClient";
 
 export const command: ICommand = {
     name: 'pause',
     description: 'Pause Music',
-    run: async (client: UndefinedClient, guild: Guild, user: User, message: Message, userCommand: IUserCommand) => {
+    run: async (client: UndefinedClient, message: Message, params: string[]) => {
 
         if (!client.VoiceChatService.isMemberConnected(message)) {
             return;
         }
 
-        client.VoiceChatService.pausePlayback(guild);
+        client.VoiceChatService.pausePlayback(message.guild!);
 
         await message.react('⏸️');
     }

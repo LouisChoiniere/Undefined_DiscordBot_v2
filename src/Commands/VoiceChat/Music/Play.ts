@@ -1,7 +1,6 @@
 import { Guild, Message, User } from "discord.js";
 import { ICommand } from "../../../Interfaces/ICommand";
 import { IQueueElement } from "../../../Interfaces/IQueueElement";
-import { IUserCommand } from "../../../Interfaces/IUserCommand";
 import { UndefinedClient } from "../../../UndefinedClient";
 import { getPage, googleScrape } from "../../../Utils/GoogleScrape";
 
@@ -10,28 +9,28 @@ export const command: ICommand = {
     name: 'play',
     aliases: ['p'],
     description: 'Play Music',
-    run: async (client: UndefinedClient, guild: Guild, user: User, message: Message, userCommand: IUserCommand) => {
+    run: async (client: UndefinedClient, message: Message, params: string[]) => {
 
         if (!client.VoiceChatService.isMemberConnected(message)) {
             return;
         }
 
         // Join vc
-        client.VoiceChatService.join(message.member?.voice.channel!, guild);
+        client.VoiceChatService.join(message.member?.voice.channel!, message.guild!);
 
         // Add to queue
-        var queue = client.VoiceChatService.getQueue(guild);
-        await addToQueue(queue, userCommand.args.join(' '), message.channelId);
+        var queue = client.VoiceChatService.getQueue(message.guild!);
+        await addToQueue(queue, params.join(' '), message.channelId);
 
         // Start audio playback
-        client.VoiceChatService.startPlayback(guild);
+        client.VoiceChatService.startPlayback(message.guild!);
 
 
         async function addToQueue(queue: IQueueElement[], arg: string, channelId: string) {
             var queueElement;
 
             if (!arg) {
-                client.VoiceChatService.resumePlayback(guild);
+                client.VoiceChatService.resumePlayback(message.guild!);
             }
 
             // Youtube url

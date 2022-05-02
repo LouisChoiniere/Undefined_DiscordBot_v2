@@ -1,15 +1,14 @@
 import { Guild, Message, MessageEmbed, User } from "discord.js";
 import { ICommand } from "../../../Interfaces/ICommand";
-import { IUserCommand } from "../../../Interfaces/IUserCommand";
 import { UndefinedClient } from "../../../UndefinedClient";
 
 export const command: ICommand = {
     name: 'queue',
     aliases: ['q', 'np'],
     description: 'Check the queue',
-    run: async (client: UndefinedClient, guild: Guild, user: User, message: Message, userCommand: IUserCommand) => {
+    run: async (client: UndefinedClient, message: Message, params: string[]) => {
 
-        var queue = client.VoiceChatService.getQueue(guild);
+        var queue = client.VoiceChatService.getQueue(message.guild!);
         if (!queue || queue.length == 0) {
             await message.channel.send('Queue is empty!');
             return;

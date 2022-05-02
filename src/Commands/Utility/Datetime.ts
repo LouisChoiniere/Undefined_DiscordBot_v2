@@ -1,17 +1,16 @@
 import { Guild, Message, User } from "discord.js";
 import { DateTime } from "luxon";
 import { ICommand } from "../../Interfaces/ICommand";
-import { IUserCommand } from "../../Interfaces/IUserCommand";
 import { UndefinedClient } from "../../UndefinedClient";
 
 export const command: ICommand = {
     name: 'date',
     description: 'Calculates dates for you!',
-    run: async (client: UndefinedClient, guild: Guild, user: User, message: Message, userCommand: IUserCommand) => {
+    run: async (client: UndefinedClient, message: Message, params: string[]) => {
 
         var dateStr = DateTime.now()
-            .setZone(userCommand.flags.find(x => x.flag == 'tz')?.value ?? 'UTC')
-            .toFormat(userCommand.flags.find(x => x.flag == 'f')?.value  ?? 'F');
+            .setZone(params[0] ?? 'UTC')
+            .toFormat(params[1]  ?? 'F');
 
         await message.channel.send(dateStr);
     }

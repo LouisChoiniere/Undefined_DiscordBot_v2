@@ -7,7 +7,7 @@
 // export const command: ICommand = {
 //     name: 'ff',
 //     description: 'Fast forward',
-//     run: async (client: UndefinedClient, guild: Guild, user: User, message: Message, userCommand: IUserCommand) => {
+//     run: async (client: UndefinedClient, message: Message, params: string[]) => {
 
 //         if (!VoiceChatUtil.isConnected(message)) {
 //             return;

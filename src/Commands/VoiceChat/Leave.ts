@@ -1,18 +1,17 @@
 import { Guild, Message, User } from "discord.js";
 import { ICommand } from "../../Interfaces/ICommand";
-import { IUserCommand } from "../../Interfaces/IUserCommand";
 import { UndefinedClient } from "../../UndefinedClient";
 
 export const command: ICommand = {
     name: 'leave',
     description: 'Leave voice chanel',
-    run: async (client: UndefinedClient, guild: Guild, user: User, message: Message, userCommand: IUserCommand) => {
+    run: async (client: UndefinedClient, message: Message, params: string[]) => {
 
-        client.VoiceChatService.leave(guild);
+        client.VoiceChatService.leave(message.guild!);
 
         await message.react('👋');
 
         // Clear queue
-        client.VoiceChatService.deleteQueue(guild);
+        client.VoiceChatService.deleteQueue(message.guild!);
     }
 }

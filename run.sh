@@ -7,4 +7,4 @@ npx prisma generate
 npx prisma migrate deploy 
 
 # Start node server
-npm start
+pm2-runtime dist/app.js

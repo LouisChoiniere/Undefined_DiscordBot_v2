@@ -1,13 +1,12 @@
-import { Guild, Message, MessageEmbed, User } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 import { ICommand } from "../../Interfaces/ICommand";
-import { IUserCommand } from "../../Interfaces/IUserCommand";
 import { UndefinedClient } from "../../UndefinedClient";
 import { msToTime } from "../../Utils/Util";
 
 export const command: ICommand = {
     name: 'ping',
     description: 'Ping!',
-    run: async (client: UndefinedClient, guild: Guild, user: User, message: Message, userCommand: IUserCommand) => {
+    run: async (client: UndefinedClient, message: Message, params: string[]) => {
         let msg = await message.channel.send('Pinging...');
 
         await msg.edit({

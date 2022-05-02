@@ -137,7 +137,7 @@ export default class VoiceChatService {
     }
 
     stopPlayback(guild: Guild) {
-        this.audioPlayers.get(guild.id)?.stop();
+        this.audioPlayers.get(guild.id)?.stop(true);
     }
 
     private playAudioResource(audioPlayer: AudioPlayer | undefined, queueElement: IQueueElement) {
